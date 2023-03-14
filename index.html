@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Image Generator</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 1rem;
+      text-align: center;
+      background-color: #333;
+      color: #fff;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    label {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 0.25rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    #image-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    #processing-message {
+      display: none;
+      font-size: 1.2rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Generate Image</h1>
+  <form>
+    <label for="prompt">Enter a prompt:</label>
+    <input type="text" id="prompt" name="prompt"><br><br>
+    <button type="button" onclick="generateImage()">Generate Image</button>
+    <div id="processing-message">Processing...</div>
+  </form>
+  <div id="image-container"></div>
+  <script>
+    function generateImage() {
+      // Get the prompt entered by the user
+      const prompt = document.getElementById("prompt").value;
+
+      // Show the processing message
+      const processingMessage = document.getElementById("processing-message");
+      processingMessage.style.display = "block";
+
+      // Make a request to the ChatGPT API
+      fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer <YOUR_API_KEY>`
+        },
+        body: JSON.stringify({
+          model: "image-alpha-001",
+          prompt: prompt,
+          num_images: 1,
+          size: "512x512",
+          response_format: "url"
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Hide the processing message
+          processingMessage.style.display = "none";
+
+          // Log the response object to the console
+          console.log(data);
+
+          // Display the generated image on the front-end
+          const imageContainer = document.getElementById("image-container");
+          imageContainer.innerHTML = "";
+          const image = document.createElement("img");
+          image.src = data.url;
+          imageContainer.appendChild(image);
+        })
+        .catch(error => console.log(error));
+    }
+
+  </script>
+</body>
+
+</html>
