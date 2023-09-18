@@ -1,2 +1,2 @@
 # CMD2IMG
-This website converts promt to a image.
+This website converts image to a prompt.
